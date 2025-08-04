@@ -114,30 +114,28 @@ int main(void)
 
     lv_init();
 
+    lv_obj_t *count_label;
+
     /* Make background white */
     lv_obj_clean(lv_scr_act());
     lv_obj_set_style_bg_color(lv_scr_act(), lv_color_white(), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(lv_scr_act(), LV_OPA_COVER, 0);
 
-    lv_obj_t *count_label;
     count_label = lv_label_create(lv_scr_act());
     lv_obj_set_style_bg_color(count_label, lv_color_white(), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(count_label, LV_OPA_TRANSP, LV_PART_MAIN);  // Transparent background
-    lv_obj_set_width(count_label, 100);   // ensure label box doesn't resize
-    lv_obj_set_height(count_label, 50);  // ensure label box doesn't resize
+    lv_obj_set_style_bg_opa(count_label, LV_OPA_TRANSP, LV_PART_MAIN);  // Opaque background
+    lv_obj_set_width(count_label, 50);   // ensure label box doesn't resize
+    lv_obj_set_height(count_label, 25);  // ensure label box doesn't resize
     lv_label_set_long_mode(count_label, LV_LABEL_LONG_CLIP);
-    lv_obj_set_style_text_align(count_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_text_color(count_label, lv_color_black(), LV_PART_MAIN);
-    lv_obj_set_style_text_font(count_label, &lv_font_montserrat_48, 0);
+    lv_obj_set_style_text_font(count_label, &lv_font_montserrat_24, 0);
+    lv_obj_set_style_text_align(count_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_label_set_text(count_label, "0");
     lv_obj_align(count_label, LV_ALIGN_CENTER, 0, 0);
 
     /* Turn on the display */
-    display_blanking_off(display_dev);
-
-    /* Draw UI once */
     lv_timer_handler();
-    lv_refr_now(NULL);
+    display_blanking_off(display_dev);
 
     while (1) {
 
@@ -159,12 +157,26 @@ int main(void)
 			LOG_INF("Button pressed, count: %u", count);
 
             static char buf[32];
+            static char prev_buf[32];
             snprintf(buf, sizeof(buf), "%u", count);
-            
-            lv_label_set_text(count_label, buf);
-            lv_obj_invalidate(count_label);
 
-            lv_timer_handler();
+            // Pass 1: Erase the previous text
+            if (strlen(prev_buf) > 0) {
+                lv_label_set_text(count_label, prev_buf);
+                lv_obj_set_style_text_color(count_label, lv_color_white(), LV_PART_MAIN);
+                lv_obj_invalidate(count_label);
+                lv_refr_now(NULL);
+            }
+
+            // Pass 2: Update the label with the actual value
+            lv_label_set_text(count_label, buf);
+            lv_obj_set_style_text_color(count_label, lv_color_black(), LV_PART_MAIN);
+            lv_obj_invalidate(count_label);
+            lv_refr_now(NULL);
+
+            strcpy(prev_buf, buf);  // Store the current value for the next iteration
+
+            // lv_timer_handler();  // Process LVGL events
 		}
 		
 		k_sleep(K_MSEC(10));
