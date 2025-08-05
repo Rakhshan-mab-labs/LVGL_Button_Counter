@@ -124,11 +124,11 @@ int main(void)
     count_label = lv_label_create(lv_scr_act());
     lv_obj_set_style_bg_color(count_label, lv_color_white(), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(count_label, LV_OPA_TRANSP, LV_PART_MAIN);  // Opaque background
-    lv_obj_set_width(count_label, 50);   // ensure label box doesn't resize
-    lv_obj_set_height(count_label, 25);  // ensure label box doesn't resize
+    lv_obj_set_width(count_label, 100);   // ensure label box doesn't resize
+    lv_obj_set_height(count_label, 50);  // ensure label box doesn't resize
     lv_label_set_long_mode(count_label, LV_LABEL_LONG_CLIP);
     lv_obj_set_style_text_color(count_label, lv_color_black(), LV_PART_MAIN);
-    lv_obj_set_style_text_font(count_label, &lv_font_montserrat_24, 0);
+    lv_obj_set_style_text_font(count_label, &lv_font_montserrat_48, 0);
     lv_obj_set_style_text_align(count_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_label_set_text(count_label, "0");
     lv_obj_align(count_label, LV_ALIGN_CENTER, 0, 0);
@@ -175,8 +175,6 @@ int main(void)
             lv_refr_now(NULL);
 
             strcpy(prev_buf, buf);  // Store the current value for the next iteration
-
-            // lv_timer_handler();  // Process LVGL events
 		}
 		
 		k_sleep(K_MSEC(10));
